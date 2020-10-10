@@ -17,6 +17,7 @@ class _RegisterState extends State<Register>
 
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool loading = false;
 
 // text field state
   String email = '';
@@ -92,10 +93,12 @@ class _RegisterState extends State<Register>
                     ),
                     onPressed: () async {
                       if (_formKey.currentState.validate()) {
+                        setState(() => loading = true);
                         dynamic result = await _authService
                             .registerWithEmailAndPass(email, password);
                         if (result == null) {
                           setState(() => error = 'please supply a valid email');
+                          loading = false;
                         }
                       }
                     },
