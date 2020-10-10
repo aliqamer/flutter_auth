@@ -2,23 +2,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_auth/services/auth.dart';
 import 'package:flutter_auth/shared/constants.dart';
 
-class SignIn extends StatefulWidget {
+class Register extends StatefulWidget {
   final Function toggleView;
 
-  SignIn({this.toggleView});
+  Register({this.toggleView});
 
   @override
-  _SignInState createState() => _SignInState();
+  _RegisterState createState() => _RegisterState();
 }
 
-class _SignInState extends State<SignIn> {
+class _RegisterState extends State<Register>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
 
-  // text field state
+// text field state
   String email = '';
   String password = '';
   String error = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,14 +42,14 @@ class _SignInState extends State<SignIn> {
       appBar: AppBar(
         backgroundColor: Colors.brown[400],
         elevation: 0.0,
-        title: Text('Sign in to my app'),
+        title: Text('Sign up to my app'),
         actions: <Widget>[
           FlatButton.icon(
               onPressed: () {
                 widget.toggleView();
               },
               icon: Icon(Icons.person),
-              label: Text('Register'))
+              label: Text('Sign in'))
         ],
       ),
       body: Container(
@@ -72,18 +87,25 @@ class _SignInState extends State<SignIn> {
                   RaisedButton(
                     color: Colors.pink[400],
                     child: Text(
-                      'Sign in',
+                      'Register',
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () async {
                       if (_formKey.currentState.validate()) {
                         dynamic result = await _authService
-                            .signInWithEmailAndPass(email, password);
+                            .registerWithEmailAndPass(email, password);
                         if (result == null) {
-                          setState(() => error = 'Error in signin...');
+                          setState(() => error = 'please supply a valid email');
                         }
                       }
                     },
+                  ),
+                  SizedBox(
+                    height: 12.0,
+                  ),
+                  Text(
+                    error,
+                    style: TextStyle(color: Colors.red, fontSize: 14.0),
                   )
                 ],
               ))),
